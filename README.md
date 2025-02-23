@@ -15,6 +15,10 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+## Database testing
+
+You'll need Surrealdb to be installed locally. Consider using [surrealist](https://surrealist.app) as well in order to view the table. The hardcoded credentials are root:root.
+
 ## Using Rust Inside Flutter
 
 This project leverages Flutter for GUI and Rust for the backend logic,
