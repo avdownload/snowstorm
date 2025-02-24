@@ -2,6 +2,7 @@
     <application
         android:label="snowstorm"
         android:name="${applicationName}"
+        android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -42,4 +43,7 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+    <uses-permission android:name="android.permission.READ_MEDIA_*">
+    <uses-permission android:name="android.permission.*_EXTERNAL_STORAGE">
+
 </manifest>

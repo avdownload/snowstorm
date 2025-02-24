@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:rinf/rinf.dart';
 import './messages/all.dart';
 
@@ -105,6 +106,11 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 void getPath() async {
+  // TODO: Do we need all of these permissions?
+  await Permission.mediaLibrary.request();
+  await Permission.accessMediaLocation.request();
+  await Permission.manageExternalStorage.request();
+  await Permission.audio.request();
   String? path = await FilePicker.platform.getDirectoryPath();
   FolderPath(path: path).sendSignalToRust();
 }
