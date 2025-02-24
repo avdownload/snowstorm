@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+rodio = "0.20.1"
 serde = { version = "1.0.218", features = ["derive"] }
 surrealdb = "2.2.1"
 symphonia = "0.5.4"

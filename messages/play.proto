@@ -1,0 +1,14 @@
+syntax = "proto3";
+package play;
+
+// [DART-SIGNAL]
+message PlayFile {
+    string location = 1; 
+    AudioCommand command = 2;
+}
+
+enum AudioCommand {
+    play = 0;
+    stop = 1;
+    continue = 2;
+}

@@ -1,12 +1,11 @@
 use std::{
-    ffi::OsStr,
-    fs::{read_dir, File, OpenOptions, ReadDir},
-    path::{self, Path},
+    ffi::OsStr, fs::{read_dir, File, OpenOptions, ReadDir}, io::BufReader, path::{self, Path}
 };
 
 mod metadata;
 
 use metadata::{Metadata, Song};
+use rodio::{Decoder, OutputStream, Sink};
 use surrealdb::{
     engine::remote::ws::{Client, Ws},
     opt::auth::Root,
@@ -21,6 +20,7 @@ use symphonia::{
     },
     default::{get_codecs, get_probe},
 };
+use tokio::sync::mpsc::Receiver;
 
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
@@ -153,6 +153,37 @@ pub async fn get_songs() -> Vec<Song> {
         .await
         .expect("Could not select resources with the identifier song.");
     return songs;
+}
+
+pub enum AudioMessage {
+    Play(String),
+    Start,
+    Stop,
+}
+
+pub async fn audio_handler(mut receiver: Receiver<AudioMessage>) {
+    println!("Attempting to play");
+    let (_stream, stream_handle) = OutputStream::try_default().expect("Could not obtain an output device.");
+    let sink = Sink::try_new(&stream_handle).expect("Could not create a new sink.");
+   
+    while let Some(command) = receiver.recv().await {
+        match command {
+            AudioMessage::Play(location) => {
+                sink.skip_one();
+                let file = BufReader::new(File::open(location).expect("Could not find the file that should be played."));
+                let source = Decoder::new(file).expect("Could not decode into a source.");
+                sink.append(source);
+                sink.play();
+                println!("can you hear me?");
+            },
+            AudioMessage::Stop => {
+                sink.pause();
+            },
+            AudioMessage::Start => {
+                sink.play();
+            }
+        }
+    }
 }
 
 #[cfg(test)]

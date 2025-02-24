@@ -6,6 +6,7 @@ message Song {
     string title = 1;
     string album = 2;
     string artist = 3;
+    string location = 4;
 }
 
 // [RUST-SIGNAL]

@@ -73,6 +73,9 @@ class _MyHomePageState extends State<MyHomePage> {
    return  ListTile(title: Text(songs[index].title ?? "error null data"),
     trailing: Text(songs[index].artist ?? "error null data"),
     subtitle: Text(songs[index].album ?? "error null data"),
+    onTap: () {
+      PlayFile(location: songs[index].location, command: AudioCommand.play).sendSignalToRust();
+    },
   );
   },itemCount: songs.length,
   )),
@@ -85,13 +88,18 @@ class _MyHomePageState extends State<MyHomePage> {
              setState(() {
                 songs = item.message.songs;
              });
-             print(songs);
-             print(item.message);
           }
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
+      persistentFooterButtons: [FloatingActionButton(onPressed: () {PlayFile(command: AudioCommand.stop).sendSignalToRust();}, child: Icon(
+         Icons.abc),),
+         FloatingActionButton(onPressed: () {PlayFile(command: AudioCommand.continue_).sendSignalToRust();}, child: Icon(
+         Icons.dangerous),),
+         
+         
+         ],
     );
   }
 }

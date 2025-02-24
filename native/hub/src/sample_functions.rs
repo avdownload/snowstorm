@@ -18,6 +18,7 @@ pub async fn communicate() {
             title: song.metadata.name,
             album: song.metadata.album,
             artist: song.metadata.artist,
+            location: song.location,
         });
     }
     Songs {
@@ -41,6 +42,7 @@ pub async fn communicate() {
                 title: song.metadata.name,
                 album: song.metadata.album,
                 artist: song.metadata.artist,
+                location: song.location,
             });
         }
         messages::Songs {
