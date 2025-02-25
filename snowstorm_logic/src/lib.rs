@@ -107,6 +107,7 @@ pub async fn read_metadata(song_location: String) -> Metadata {
         if let Some(mut metadata) = metadata.metadata.get() {
             if let Some(metadata) = metadata.skip_to_latest() {
                 for tag in metadata.tags() {
+                    println!("{:?}", tag.key);
                     if let Some(tag_key) = tag.std_key {
                         match tag_key {
                             symphonia::core::meta::StandardTagKey::Album => {
@@ -139,10 +140,12 @@ pub async fn add_song(song_location: String) {
         .create(("song", &metadata.name))
         .content(Song {
             location: song_location.clone(),
-            metadata: metadata,
+            metadata: metadata.clone(),
         })
-        .await
-        .expect("Could not write to db.");
+        .await.unwrap_or(Some(Song {
+            location: song_location.clone(),
+            metadata: metadata,
+        }));
 }
 
 pub async fn get_songs() -> Vec<Song> {

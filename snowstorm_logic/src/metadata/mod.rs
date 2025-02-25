@@ -5,7 +5,7 @@ pub struct Song {
     pub location: String,
     pub metadata: Metadata,
 }
-#[derive(Debug, Serialize, serde::Deserialize)]
+#[derive(Debug, Serialize, serde::Deserialize, Clone)]
 pub struct Metadata {
     /// You must have a name, album and artist. Put them as sensible defaults.
     pub name: String,
