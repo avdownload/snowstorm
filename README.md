@@ -5,6 +5,7 @@
 - Metadata doesn't seem to be read correctly.
 - UI icons and choices need work.
 - Lacks features.
+- Doesn't 
 - Traversing the directory doesn't seem to actually be recursive for really large files. Performance is poor.
 
 - Database doesn't work on Android.

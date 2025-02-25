@@ -4,6 +4,7 @@ use std::{
 
 mod metadata;
 
+use lofty::{file::TaggedFileExt, probe::Probe, tag::Accessor};
 use metadata::{Metadata, Song};
 use rodio::{Decoder, OutputStream, Sink};
 use surrealdb::{
@@ -88,45 +89,21 @@ pub async fn init_db() -> Surreal<Client> {
 }
 
 pub async fn read_metadata(song_location: String) -> Metadata {
-    let codec = get_codecs();
-    let probe = get_probe();
-    let file =
-        File::open(Path::new(&song_location)).expect("Could not open file in read_metadata.");
-    let mss = MediaSourceStream::new(Box::new(file), MediaSourceStreamOptions::default());
-    let mut result = Metadata {
-        name: song_location,
+    let mut data = Metadata {
+        name:song_location.clone(),
         album: "null".to_string(),
         artist: "null".to_string(),
     };
-    if let Ok(mut metadata) = probe.format(
-        &Hint::new(),
-        mss,
-        &FormatOptions::default(),
-        &MetadataOptions::default(),
-    ) {
-        if let Some(mut metadata) = metadata.metadata.get() {
-            if let Some(metadata) = metadata.skip_to_latest() {
-                for tag in metadata.tags() {
-                    println!("{:?}", tag.key);
-                    if let Some(tag_key) = tag.std_key {
-                        match tag_key {
-                            symphonia::core::meta::StandardTagKey::Album => {
-                                result.album = tag.value.to_string();
-                            }
-                            symphonia::core::meta::StandardTagKey::Artist => {
-                                result.artist = tag.value.to_string();
-                            }
-                            symphonia::core::meta::StandardTagKey::TrackTitle => {
-                                result.name = tag.value.to_string();
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-            }
+    let tag = match Probe::open(song_location.clone()).expect("Could not open the song file.").read().expect("Could not read the song file.").primary_tag() {
+        Some(tags) => {
+            data.name = tags.title().as_deref().unwrap_or( "none").to_string();
+
+            data.artist = tags.artist().as_deref().unwrap_or( "none").to_string();
+            data.album = tags.album().as_deref().unwrap_or( "none").to_string();
+            return data;
         }
-    }
-    result
+        None => {return data;},
+    };
 }
 
 pub async fn add_song(song_location: String) {
