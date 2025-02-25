@@ -1,64 +1,16 @@
-# snowstorm
+# Snowstorm.
+## A music player that may one day be good.
 
-A new Flutter project.
+## Issues
+- Metadata doesn't seem to be read correctly.
+- UI icons and choices need work.
+- Lacks features.
+- Traversing the directory doesn't seem to actually be recursive.
 
-## Getting Started
+- Database doesn't work on Android.
+- Database has to be manually started (127.0.0.1:8000, root:root).
+- Poor naming of database services.
+- Duplicate entries seem to be an issue.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-## Database testing
-
-You'll need Surrealdb to be installed locally. Consider using [surrealist](https://surrealist.app) as well in order to view the table. The hardcoded credentials are root:root.
-
-## Using Rust Inside Flutter
-
-This project leverages Flutter for GUI and Rust for the backend logic,
-utilizing the capabilities of the
-[Rinf](https://pub.dev/packages/rinf) framework.
-
-To run and build this app, you need to have
-[Flutter SDK](https://docs.flutter.dev/get-started/install)
-and [Rust toolchain](https://www.rust-lang.org/tools/install)
-installed on your system.
-You can check that your system is ready with the commands below.
-Note that all the Flutter subcomponents should be installed.
-
-```shell
-rustc --version
-flutter doctor
-```
-
-You also need to have the CLI tool for Rinf ready.
-
-```shell
-cargo install rinf
-```
-
-Messages sent between Dart and Rust are implemented using Protobuf.
-If you have newly cloned the project repository
-or made changes to the `.proto` files in the `./messages` directory,
-run the following command:
-
-```shell
-rinf message
-```
-
-Now you can run and build this app just like any other Flutter projects.
-
-```shell
-flutter run
-```
-
-For detailed instructions on writing Rust and Flutter together,
-please refer to Rinf's [documentation](https://rinf.cunarist.com).
-
-
+- Poor practices surrounding the audio thread.
+- Code organisation is awful

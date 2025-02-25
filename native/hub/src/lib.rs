@@ -17,7 +17,7 @@ rinf::write_interface!();
 // You can go with any async library, not just `tokio`.
 #[tokio::main(flavor = "current_thread")]
 async fn main() {   let (channel, receiver) = channel::<snowstorm_logic::AudioMessage>(5); // how big should this be?
-
+    snowstorm_logic::create_db("".to_string()).await;
     // Spawn concurrent tasks.
     // Always use non-blocking async functions like `tokio::fs::File::open`.
     // If you must use blocking code, use `tokio::task::spawn_blocking`

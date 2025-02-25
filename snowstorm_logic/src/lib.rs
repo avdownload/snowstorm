@@ -1,5 +1,5 @@
 use std::{
-    ffi::OsStr, fs::{read_dir, File, OpenOptions, ReadDir}, io::BufReader, path::{self, Path}
+    ffi::OsStr, fs::{read_dir, File, OpenOptions, ReadDir}, io::BufReader, path::{self, Path}, sync::OnceLock
 };
 
 mod metadata;
@@ -68,17 +68,23 @@ fn traverse_directory(dir: String) -> Option<Vec<String>> {
     None
 }
 
+static  DB: OnceLock<Surreal<Client>> = OnceLock::new();
+
+pub async fn create_db(dir: String) {    let db = Surreal::new::<Ws>("127.0.0.1:8000").await.expect("Could not create a db.");
+    DB.get_or_init(|| db);
+}
+
 pub async fn init_db() -> Surreal<Client> {
-    let db = Surreal::new::<Ws>("127.0.0.1:8000")
-        .await
+    let db = DB.get()
         .expect("Could not connect to the db.");
+
     db.signin(Root {
         username: "root",
         password: "root",
     })
     .await
     .expect("Could not login to the db.");
-    return db;
+    return db.clone();
 }
 
 pub async fn read_metadata(song_location: String) -> Metadata {

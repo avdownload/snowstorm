@@ -46,7 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getInitialSongs();
@@ -54,12 +53,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void getInitialSongs() async {
-   await for (final song in Songs.rustSignalStream) {
-    setState(() {
-      songs =     song.message.songs;
-
-    });
-   }
+    await for (final song in Songs.rustSignalStream) {
+      setState(() {
+        songs = song.message.songs;
+      });
+    }
   }
 
   @override
@@ -67,40 +65,52 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: Center(
-   
+        child: ListView.builder(
+          itemBuilder: (context, index) {
+            songs.toSet().toList();
 
-           child:ListView.builder(itemBuilder: (context, index) {               songs.toSet().toList();
+            return ListTile(
+              title: Text(songs[index].title ?? "error null data"),
+              trailing: Text(songs[index].artist ?? "error null data"),
+              subtitle: Text(songs[index].album ?? "error null data"),
+              onTap: () {
+                PlayFile(
+                  location: songs[index].location,
+                  command: AudioCommand.play,
+                ).sendSignalToRust();
+              },
+            );
+          },
+          itemCount: songs.length,
+        ),
+      ),
 
-   return  ListTile(title: Text(songs[index].title ?? "error null data"),
-    trailing: Text(songs[index].artist ?? "error null data"),
-    subtitle: Text(songs[index].album ?? "error null data"),
-    onTap: () {
-      PlayFile(location: songs[index].location, command: AudioCommand.play).sendSignalToRust();
-    },
-  );
-  },itemCount: songs.length,
-  )),
-
-  
-  floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () async {
           getPath();
-          await for ( RustSignal<Songs> item in Songs.rustSignalStream) {
-             setState(() {
-                songs = item.message.songs;
-             });
+          await for (RustSignal<Songs> item in Songs.rustSignalStream) {
+            setState(() {
+              songs = item.message.songs;
+            });
           }
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
-      persistentFooterButtons: [FloatingActionButton(onPressed: () {PlayFile(command: AudioCommand.stop).sendSignalToRust();}, child: Icon(
-         Icons.abc),),
-         FloatingActionButton(onPressed: () {PlayFile(command: AudioCommand.continue_).sendSignalToRust();}, child: Icon(
-         Icons.dangerous),),
-         
-         
-         ],
+      persistentFooterButtons: [
+        FloatingActionButton(
+          onPressed: () {
+            PlayFile(command: AudioCommand.stop).sendSignalToRust();
+          },
+          child: Icon(Icons.abc),
+        ),
+        FloatingActionButton(
+          onPressed: () {
+            PlayFile(command: AudioCommand.continue_).sendSignalToRust();
+          },
+          child: Icon(Icons.dangerous),
+        ),
+      ],
     );
   }
 }
@@ -112,5 +122,6 @@ void getPath() async {
   await Permission.manageExternalStorage.request();
   await Permission.audio.request();
   String? path = await FilePicker.platform.getDirectoryPath();
+  print(path);
   FolderPath(path: path).sendSignalToRust();
 }

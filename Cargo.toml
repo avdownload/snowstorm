@@ -4,5 +4,5 @@
 # various Rust configurations.
 
 [workspace]
-members = ["./native/*", "snowstorm_logic"]
+members = ["./native/*"]
 resolver = "2"
